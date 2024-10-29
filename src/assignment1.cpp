@@ -1,10 +1,13 @@
-#include <cstdio>
+#include<movementController.hpp>
+#include <rclcpp/utilities.hpp>
 
 int main(int argc, char ** argv)
 {
-  (void) argc;
-  (void) argv;
-
+  rclcpp::init(argc, argv);
   printf("hello world exprob package\n");
+  /*MovementController mc;*/
+
+  rclcpp::spin(std::make_shared<MovementController>());
+  rclcpp::shutdown();
   return 0;
 }

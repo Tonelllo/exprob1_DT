@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 project(exprob_dt)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)
@@ -17,11 +19,13 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
 add_executable(assignment1 src/assignment1.cpp)
+ament_target_dependencies(assignment1 rclcpp)
 target_include_directories(assignment1 PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
