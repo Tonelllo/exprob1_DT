@@ -1,6 +1,6 @@
 from launch_ros.substitutions import FindPackageShare
 from launch.actions import SetEnvironmentVariable, ExecuteProcess, DeclareLaunchArgument
-from launch.substitutions import Command, LaunchConfiguration
+from launch.substitutions import Command, LaunchConfiguration, EnvironmentVariable
 from launch import LaunchDescription
 from launch_ros.actions import Node
 import os
@@ -11,7 +11,10 @@ def generate_launch_description():
     urdf_path = os.path.join(assignment_path, "urdf")
     worlds_path = os.path.join(assignment_path, "worlds")
     rviz_config_path = os.path.join(assignment_path, "config")
+    models_path = os.path.join(assignment_path, "models")
 
+    gazebo_model_path = EnvironmentVariable("GAZEBO_MODEL_PATH", default_value="")
+    gazebo_model_path = [gazebo_model_path, ":", models_path]
     robot_state_publisher_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -28,13 +31,16 @@ def generate_launch_description():
                         arguments=['-entity', 'aruco_bot',
                                    '-topic', '/robot_description'],
                         output='screen')
+
+    run_assignment = Node(package="exprob_dt", executable="assignment1", output="screen")
     return LaunchDescription([
-        # SetEnvironmentVariable(name="GAZEBO_MODEL_PATH", value=models_path),
+        SetEnvironmentVariable(name="GAZEBO_MODEL_PATH", value=gazebo_model_path),
         DeclareLaunchArgument(name='model', default_value=os.path.join(urdf_path, "robot.xacro"),
                                     description='Absolute path to robot urdf file'),
         robot_state_publisher_node,
         joint_state_publisher_node,
         spawn_entity,
+        run_assignment,
 
         ExecuteProcess(
             cmd=['gazebo', '--verbose', worlds_path+'/aruco_world.world', '-s', "libgazebo_ros_factory.so"], output='screen'),
