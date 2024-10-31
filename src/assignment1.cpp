@@ -1,17 +1,41 @@
+#include <memory>
 #include <movementController.hpp>
+#include <rclcpp/executors.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/utilities.hpp>
-using namespace std::chrono_literals;
+#include <thread>
+#include "arucoManager.hpp"
 
-int main(int argc, char **argv) {
+enum class States
+{
+  SCANNING_FOR_MINIMUM
+};
+
+int main(int argc, char** argv)
+{
+  using namespace std::chrono_literals;
   rclcpp::init(argc, argv);
-  MovementController movController;
 
-  rclcpp::sleep_for(3s);
+  MovementController movController;
+  States state = States::SCANNING_FOR_MINIMUM;
+  std::vector<int> detectedIds;
+
   movController.startRotation();
 
-  rclcpp::sleep_for(3s);
-  movController.stopRotation();
+  std::thread t([&detectedIds]() { rclcpp::spin(std::make_shared<ArucoManager>(detectedIds)); });
+  while (true)
+  {
+    switch (state)
+    {
+      case States::SCANNING_FOR_MINIMUM:
+        std::cout << "Array size: " << detectedIds.size() << std::endl;
+        break;
+    }
+    rclcpp::sleep_for(1s);
+  }
+
+  /*movController.stopRotation();*/
+  t.join();
   rclcpp::shutdown();
   return 0;
 }

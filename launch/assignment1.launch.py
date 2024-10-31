@@ -32,11 +32,13 @@ def generate_launch_description():
                                    '-topic', '/robot_description'],
                         output='screen')
 
+    aruco_ros = Node(package="ros2_aruco", executable="aruco_node", output="screen")
     run_assignment = Node(package="exprob_dt", executable="assignment1", output="screen")
     return LaunchDescription([
         SetEnvironmentVariable(name="GAZEBO_MODEL_PATH", value=gazebo_model_path),
         DeclareLaunchArgument(name='model', default_value=os.path.join(urdf_path, "robot.xacro"),
                                     description='Absolute path to robot urdf file'),
+        aruco_ros,
         robot_state_publisher_node,
         joint_state_publisher_node,
         spawn_entity,

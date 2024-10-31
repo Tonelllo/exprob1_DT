@@ -1,15 +1,20 @@
 #include "movementController.hpp"
 #include <rclcpp/logging.hpp>
+#include <rclcpp/utilities.hpp>
 
 MovementController::MovementController() : Node("movement_controller"){
-    using namespace std::chrono_literals;
     mVelocityPublisher_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
 }
 
 void MovementController::startRotation(){
+    using namespace std::chrono_literals;
     RCLCPP_INFO(this->get_logger(), "Started rotation");
     geometry_msgs::msg::Twist cmdVel;
     cmdVel.angular.z = 1;
+    while(!mVelocityPublisher_->get_subscription_count()){
+        RCLCPP_WARN(this->get_logger(), "Waiting for robot to come up");
+        rclcpp::sleep_for(1s);
+    }
     mVelocityPublisher_->publish(cmdVel);
 }
 
