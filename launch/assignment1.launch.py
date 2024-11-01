@@ -18,7 +18,7 @@ def generate_launch_description():
     robot_state_publisher_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        parameters=[{'robot_description': Command(['xacro ', LaunchConfiguration('model')])}]
+        parameters=[{'robot_description': Command(['xacro ', LaunchConfiguration('model')])}],
     )
 
     joint_state_publisher_node = Node(
@@ -32,6 +32,12 @@ def generate_launch_description():
                                    '-topic', '/robot_description'],
                         output='screen')
 
+    camera_controller = Node(
+        package="controller_manager",
+        executable="spawner.py",
+        arguments=["camera_controller"],
+    )
+
     # aruco_ros = Node(package="ros2_aruco", executable="aruco_node", output="screen")
     run_assignment = Node(package="exprob_dt", executable="assignment1", output="screen")
     # run_assignment = Node(package="exprob_dt", executable="assignment1", output="screen", prefix=['gdbserver localhost:3000'])
@@ -44,11 +50,13 @@ def generate_launch_description():
         robot_state_publisher_node,
         joint_state_publisher_node,
         spawn_entity,
+        camera_controller,
         run_assignment,
 
         ExecuteProcess(
             cmd=['gazebo', '--verbose', worlds_path+'/aruco_world.world', '-s', "libgazebo_ros_factory.so"], output='screen'),
         ExecuteProcess(
-            cmd=['rviz2', '-d', rviz_config_path+'/rviz.rviz'],
+            cmd=['rviz2'],
+            # cmd=['rviz2', '-d', rviz_config_path+'/rviz.rviz'],
             output='screen'),
     ])
