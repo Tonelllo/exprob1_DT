@@ -24,6 +24,7 @@ int main(int argc, char** argv)
   movController.startRotation();
 
   std::thread t([&detectedIds]() { rclcpp::spin(std::make_shared<ArucoManager>(detectedIds)); });
+  std::cout << "STARTED" << std::endl;
 
   while (true)
   {

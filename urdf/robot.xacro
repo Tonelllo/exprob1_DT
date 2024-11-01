@@ -170,8 +170,5 @@
 	    <origin xyz="0.23 0 0.0" rpy="0 0 0"/>
 	    <parent link="link_chassis"/>
 	    <child link="camera_link"/> 
- </joint>
-
-
-
+  </joint>
 </robot>

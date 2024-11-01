@@ -976,7 +976,7 @@
       </model>
       <model name='marker11_box'>
         <pose>-1.00424 0.096507 -0.020005 2.6e-05 1.8e-05 0.002401</pose>
-        <scale>1 1 1</scale>
+        <scale>2 2 2</scale>
         <link name='link_1'>
           <pose>-1.86827 -0.006677 0.100004 1.3e-05 -2.4e-05 0.002401</pose>
           <velocity>3.6e-05 -0.000357 0.000838 0.002616 -0.000126 2.4e-05</velocity>
@@ -992,7 +992,7 @@
       </model>
       <model name='marker13_box'>
         <pose>-0.071699 1.85695 -0.020008 -1e-06 1.8e-05 -1.60841</pose>
-        <scale>1 1 1</scale>
+        <scale>2 2 2</scale>
         <link name='link_1'>
           <pose>-0.140234 2.72442 0.100004 -1.4e-05 -2.4e-05 -1.60841</pose>
           <velocity>0.000355 -4.9e-05 0.000848 -2.6e-05 0.00262 -2.5e-05</velocity>
@@ -1008,7 +1008,7 @@
       </model>
       <model name='marker21_box'>
         <pose>2.07014 0.111385 -0.020007 1.7e-05 1.8e-05 3.10703</pose>
-        <scale>1 1 1</scale>
+        <scale>2 2 2</scale>
         <link name='link_1'>
           <pose>2.93739 0.182566 0.100003 4e-06 -2.4e-05 3.10703</pose>
           <velocity>9e-06 2.4e-05 0.008965 -0.000226 0.000105 -9e-06</velocity>
@@ -1024,7 +1024,7 @@
       </model>
       <model name='marker23_box'>
         <pose>0.020934 -1.28832 -0.020009 7e-06 1.8e-05 1.47586</pose>
-        <scale>1 1 1</scale>
+        <scale>2 2 2</scale>
         <link name='link_1'>
           <pose>0.039661 -2.15829 0.100003 -6e-06 -2.4e-05 1.47586</pose>
           <velocity>-0.000211 9e-05 0.000186 -0.000956 -0.002157 -4.7e-05</velocity>
@@ -1040,7 +1040,7 @@
       </model>
       <model name='marker40_box'>
         <pose>1.88058 -1.37416 -0.020009 9e-06 1.8e-05 2.60998</pose>
-        <scale>1 1 1</scale>
+        <scale>2 2 2</scale>
         <link name='link_1'>
           <pose>2.67683 -1.72513 0.100003 -4e-06 -2.4e-05 2.60998</pose>
           <velocity>-1e-05 2e-06 6.1e-05 -2.4e-05 -9.7e-05 3e-06</velocity>
