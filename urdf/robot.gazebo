@@ -70,7 +70,7 @@
                 <remapping>~/camera_info:=camera_info</remapping>
             </ros>
             <camera_name>camera</camera_name>
-            <frame_name>camera_link</frame_name>
+            <frame_name>camera_optical_link</frame_name>
         </plugin>
     </sensor>
 </gazebo>

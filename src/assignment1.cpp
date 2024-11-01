@@ -1,10 +1,11 @@
+#include "arucoManager.hpp"
+#include <geometry_msgs/msg/detail/pose__struct.hpp>
 #include <memory>
 #include <movementController.hpp>
 #include <rclcpp/executors.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/utilities.hpp>
 #include <thread>
-#include "arucoManager.hpp"
 
 enum class States
 {
@@ -23,12 +24,12 @@ int main(int argc, char** argv)
   movController.startRotation();
 
   std::thread t([&detectedIds]() { rclcpp::spin(std::make_shared<ArucoManager>(detectedIds)); });
+
   while (true)
   {
     switch (state)
     {
       case States::SCANNING_FOR_MINIMUM:
-        std::cout << "Array size: " << detectedIds.size() << std::endl;
         break;
     }
     rclcpp::sleep_for(1s);

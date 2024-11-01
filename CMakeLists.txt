@@ -22,13 +22,15 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(ros2_aruco_interfaces REQUIRED)
+find_package(OpenCV REQUIRED)
+find_package(cv_bridge REQUIRED)
 
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
 add_executable(assignment1 src/movementController.cpp src/arucoManager.cpp src/assignment1.cpp)
-ament_target_dependencies(assignment1 rclcpp geometry_msgs ros2_aruco_interfaces)
+ament_target_dependencies(assignment1 rclcpp geometry_msgs ros2_aruco_interfaces cv_bridge OpenCV)
 target_include_directories(assignment1 PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)

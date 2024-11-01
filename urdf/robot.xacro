@@ -126,6 +126,21 @@
     <limit effort="10000" velocity="1000"/>
     <joint_properties damping="1.0" friction="1.0"/>
   </joint>
+
+  <link name="camera_optical_link">
+    <inertial>
+      <mass value="0" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0" />
+    </inertial> 
+  </link>
+
+  <!--https://wiki.ros.org/urdf/XML/joint-->
+  <joint name="camera_optical_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="-1.5708 0 -1.5708"/>
+    <parent link="camera_link"/>
+    <child link="camera_optical_link"/>
+  </joint>
   
   <link name="camera_link">
 	    <collision>
@@ -155,7 +170,7 @@
 	    <origin xyz="0.23 0 0.0" rpy="0 0 0"/>
 	    <parent link="link_chassis"/>
 	    <child link="camera_link"/> 
-	 </joint>
+ </joint>
 
 
 
