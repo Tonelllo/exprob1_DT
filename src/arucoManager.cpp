@@ -6,7 +6,7 @@
 #include <opencv2/imgproc.hpp>
 #include <rclcpp/logging.hpp>
 #include <sensor_msgs/image_encodings.hpp>
-#include <cv_bridge/cv_bridge.h>
+#include <string>
 
 using std::placeholders::_1;
 
@@ -19,36 +19,33 @@ ArucoManager::ArucoManager(std::vector<int>& detectedIds) : Node("aruco_controll
   mDetectionPublisher_ = this->create_publisher<sensor_msgs::msg::Image>("/assignment/detected_markers", 1);
 }
 
-void ArucoManager::getCurrentFrame(const sensor_msgs::msg::Image::SharedPtr img)
-{
-  cv_bridge::CvImagePtr cvPtr;
-  cvPtr = cv_bridge::toCvCopy(img, sensor_msgs::image_encodings::BGR8);
-  cv::Mat currentFrame = cvPtr->image;
-  std::vector<int> markerIds;
-  cv::aruco::detectMarkers(currentFrame, mDict_, mMarkerCorners_, markerIds, mDetectorParams_);
-  /*cv::Mat outputImage = currentFrame.clone();*/
-  /*cv::aruco::drawDetectedMarkers(outputImage, mMarkerCorners_, markerIds);*/
-  /*cv::imshow("detectedArucos", outputImage);*/
-  /*cv::waitKey(100);*/
-
+void ArucoManager::rotatingRobot(cv::Mat& currentFrame){
   size_t index = 0;
-  for (const auto& id : markerIds)
+  for (const auto& id : mMarkerIds_)
   {
     auto itr = std::find(mDetectedIds_.begin(), mDetectedIds_.end(), id);
-    if ((mDetectedIds_.size() == 0 || itr == mDetectedIds_.end()))
+    if (mDetectedIds_.size() < 5 && itr == mDetectedIds_.end())
     {
-      if (mDetectedIds_.size() < 5)
+      RCLCPP_INFO(this->get_logger(), "Detected new aruco with id: %d", id);
+      mDetectedIds_.emplace_back(id);
+      if (mDetectedIds_.size() == 5)
       {
-        RCLCPP_INFO(this->get_logger(), "Detected new aruco with id: %d", id);
-        mDetectedIds_.emplace_back(id);
-        if (mDetectedIds_.size() == 5)
+        std::sort(mDetectedIds_.begin(), mDetectedIds_.end());
+        std::string outString;
+        bool first = true;
+        for (const auto& elem : mDetectedIds_)
         {
-          std::sort(mDetectedIds_.begin(), mDetectedIds_.end());
-          for (const auto& elem : mDetectedIds_)
+          if (!first)
           {
-            std::cout << elem << std::endl;
+            outString += "\t";
           }
+          else
+          {
+            first = false;
+          }
+          outString += std::to_string(elem);
         }
+        RCLCPP_INFO(this->get_logger(), "Found all markers. The order is: %s", outString.c_str());
       }
     }
     else if (mDetectedIds_.size() == 5)
@@ -62,21 +59,18 @@ void ArucoManager::getCurrentFrame(const sensor_msgs::msg::Image::SharedPtr img)
       auto xCenter = (tl.x + br.x) / 2;
       auto yCenter = (tl.y + br.y) / 2;
       float radius = cv::norm(tl - br) / 2;
-      /*RCLCPP_INFO(this->get_logger(), "tl.x: %f, tr.x: %f, bl.x: %f, br.x: %f", tl.x, tr.x, bl.x, br.x);*/
 
-      if (xCenter >= (float)img->width / 2 - 10 && xCenter <= (float)img->width / 2 + 10)
+      if (xCenter >= (float)currentFrame.cols / 2 - 10 && xCenter <= (float)currentFrame.cols / 2 + 10)
       {
         if (id == mDetectedIds_[mCurrentSearchingIndex_])
         {
-          /*RCLCPP_INFO(this->get_logger(), "SHOWING MARKER");*/
+          RCLCPP_INFO(this->get_logger(), "Published image of marker id: %d", id);
           std::string displayString = "Id: " + std::to_string(id);
           cv::circle(currentFrame, cv::Point(xCenter, yCenter), radius, cv::Scalar(0, 255, 0), 3);
           cv::putText(currentFrame, displayString, cv::Point(xCenter + radius, yCenter - radius),
                       cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar(255, 0, 0), 3);
-          /*cv::imshow("test", currentFrame);*/
-          /*cv::waitKey(100);*/
 
-          mDetectionPublisher_->publish(*cvPtr->toImageMsg());
+          mDetectionPublisher_->publish(*mCvPtr_->toImageMsg());
           ++mCurrentSearchingIndex_;
           if (mCurrentSearchingIndex_ == 5)
             mCurrentSearchingIndex_ = 0;
@@ -85,4 +79,18 @@ void ArucoManager::getCurrentFrame(const sensor_msgs::msg::Image::SharedPtr img)
     }
     ++index;
   }
+}
+
+void ArucoManager::rotatingCamera(cv::Mat& currentFrame){
+    (void) currentFrame;
+}
+
+void ArucoManager::getCurrentFrame(const sensor_msgs::msg::Image::SharedPtr img)
+{
+  mCvPtr_ = cv_bridge::toCvCopy(img, sensor_msgs::image_encodings::BGR8);
+  cv::Mat currentFrame = mCvPtr_->image;
+  cv::aruco::detectMarkers(currentFrame, mDict_, mMarkerCorners_, mMarkerIds_, mDetectorParams_);
+    
+  /*rotatingRobot(currentFrame);*/
+  rotatingCamera(currentFrame);
 }
