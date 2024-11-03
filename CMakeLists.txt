@@ -24,13 +24,15 @@ find_package(geometry_msgs REQUIRED)
 find_package(ros2_aruco_interfaces REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(cv_bridge REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(message_filters REQUIRED)
 
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
-add_executable(assignment1 src/movementController.cpp src/arucoManager.cpp src/assignment1.cpp)
-ament_target_dependencies(assignment1 rclcpp geometry_msgs ros2_aruco_interfaces cv_bridge OpenCV)
+add_executable(assignment1 src/robotMover.cpp src/assignment1.cpp src/camMover.cpp)
+ament_target_dependencies(assignment1 rclcpp geometry_msgs ros2_aruco_interfaces cv_bridge OpenCV sensor_msgs message_filters)
 target_include_directories(assignment1 PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)

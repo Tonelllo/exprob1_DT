@@ -3,17 +3,14 @@ controller_manager:
     update_rate: 30
     use_sim_time: true
 
-    camera_controller: 
-      type: forward_command_controller/ForwardCommandController
+    camera_velocity_controller:
+      type: velocity_controllers/JointGroupVelocityController
 
-camera_controller:
+    joint_broad:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+
+camera_velocity_controller:
   ros__parameters:
     joints:
       - camera_joint
-    interface_name: position
-    command_interfaces:
-      - position
-      - velocity
-    state_interfaces:
-      - position
-      - velocity

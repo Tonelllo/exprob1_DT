@@ -1,4 +1,4 @@
-#include "arucoManager.hpp"
+#include "robotMover.hpp"
 #include <algorithm>
 #include <opencv2/aruco/dictionary.hpp>
 #include <opencv2/core/types.hpp>
@@ -10,16 +10,18 @@
 
 using std::placeholders::_1;
 
-ArucoManager::ArucoManager(std::vector<int>& detectedIds) : Node("aruco_controller"), mDetectedIds_(detectedIds)
+RobotMover::RobotMover(std::vector<int>& detectedIds) : Node("aruco_controller"), mDetectedIds_(detectedIds)
 {
   mCameraSubscriber_ = this->create_subscription<sensor_msgs::msg::Image>(
-      "/camera/image_raw", 1, std::bind(&ArucoManager::getCurrentFrame, this, _1));
+      "/camera/image_raw", 1, std::bind(&RobotMover::getCurrentFrame, this, _1));
+  mDetectionPublisher_ = this->create_publisher<sensor_msgs::msg::Image>("/assignment/detected_markers", 1);
   mDetectorParams_ = cv::aruco::DetectorParameters::create();
   mDict_ = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_ARUCO_ORIGINAL);
-  mDetectionPublisher_ = this->create_publisher<sensor_msgs::msg::Image>("/assignment/detected_markers", 1);
+  mVelocityPublisher_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
 }
 
-void ArucoManager::rotatingRobot(cv::Mat& currentFrame){
+void RobotMover::rotatingRobot(cv::Mat& currentFrame)
+{
   size_t index = 0;
   for (const auto& id : mMarkerIds_)
   {
@@ -81,16 +83,33 @@ void ArucoManager::rotatingRobot(cv::Mat& currentFrame){
   }
 }
 
-void ArucoManager::rotatingCamera(cv::Mat& currentFrame){
-    (void) currentFrame;
-}
-
-void ArucoManager::getCurrentFrame(const sensor_msgs::msg::Image::SharedPtr img)
+void RobotMover::getCurrentFrame(const sensor_msgs::msg::Image::SharedPtr img)
 {
   mCvPtr_ = cv_bridge::toCvCopy(img, sensor_msgs::image_encodings::BGR8);
   cv::Mat currentFrame = mCvPtr_->image;
   cv::aruco::detectMarkers(currentFrame, mDict_, mMarkerCorners_, mMarkerIds_, mDetectorParams_);
-    
-  /*rotatingRobot(currentFrame);*/
-  rotatingCamera(currentFrame);
+
+  rotatingRobot(currentFrame);
+}
+
+void RobotMover::startRotation()
+{
+  using namespace std::chrono_literals;
+  RCLCPP_INFO(this->get_logger(), "Started rotation");
+  geometry_msgs::msg::Twist cmdVel;
+  cmdVel.angular.z = 1;
+  while (!mVelocityPublisher_->get_subscription_count())
+  {
+    RCLCPP_WARN(this->get_logger(), "Waiting for robot to come up");
+    rclcpp::sleep_for(1s);
+  }
+  mVelocityPublisher_->publish(cmdVel);
+}
+
+void RobotMover::stopRotation()
+{
+  RCLCPP_INFO(this->get_logger(), "Stopped rotation");
+  geometry_msgs::msg::Twist cmdVel;
+  cmdVel.angular.z = 0;
+  mVelocityPublisher_->publish(cmdVel);
 }
