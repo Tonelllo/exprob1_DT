@@ -23,12 +23,17 @@ class CamMover : public rclcpp::Node
   std::map<int, float>mDetectedIds_;
   size_t mCurrentSearchingIndex_;
   rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr mDetectionPublisher_;
+  rclcpp::TimerBase::SharedPtr mTimer_;
 
   message_filters::Subscriber<sensor_msgs::msg::Image> mImageSubscriber_;
   message_filters::Subscriber<sensor_msgs::msg::JointState> mJointSubscriber_;
   using mSyncPolicy_ = message_filters::sync_policies::ApproximateTime<sensor_msgs::msg::Image, sensor_msgs::msg::JointState>;
   using mSync_ = message_filters::Synchronizer<mSyncPolicy_>;
   std::shared_ptr<mSync_> mSyncronizer_;
+  void timerCallback();
+  float mod(float, float);
+  std::atomic<float> mTarget_;
+  std::atomic<float> mCurrentJointPos_;
 public:
   CamMover();
   void startRotation();

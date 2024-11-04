@@ -19,7 +19,7 @@ class RobotMover : public rclcpp::Node
   cv::Ptr<cv::aruco::DetectorParameters> mDetectorParams_;
   cv::Ptr<cv::aruco::Dictionary> mDict_;
   size_t mCurrentSearchingIndex_;
-  std::vector<int>& mDetectedIds_;
+  std::vector<int> mDetectedIds_;
   std::vector<int> mMarkerIds_;
   std::vector<std::vector<cv::Point2f>> mMarkerCorners_;
 
@@ -28,7 +28,7 @@ class RobotMover : public rclcpp::Node
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr mCameraSubscriber_;
 
 public:
-  RobotMover(std::vector<int>&);
+  RobotMover();
   void startRotation();
   void stopRotation();
 };

@@ -1,17 +1,20 @@
 #include "camMover.hpp"
 #include <cstddef>
+#include <iterator>
 #include <memory>
+#include <opencv2/aruco.hpp>
+#include <opencv2/highgui.hpp>
 #include <rclcpp/logging.hpp>
 #include <std_msgs/msg/detail/float64_multi_array__struct.hpp>
 
 using std::placeholders::_1;
 using std::placeholders::_2;
+using namespace std::chrono_literals;
 
 CamMover::CamMover() : Node("camMover")
 {
   mDetectionPublisher_ = this->create_publisher<sensor_msgs::msg::Image>("/assignment/detected_markers", 1);
   mCurrentSearchingIndex_ = 0;
-
   mImageSubscriber_.subscribe(this, "/camera/image_raw");
   mJointSubscriber_.subscribe(this, "/joint_states");
   mSyncronizer_ = std::make_shared<mSync_>(mSyncPolicy_(10), mImageSubscriber_, mJointSubscriber_);
@@ -38,10 +41,18 @@ void CamMover::getCurrentFrame(const sensor_msgs::msg::Image::ConstSharedPtr& im
   }
   cv::Mat currentFrame = mCvPtr_->image;
   cv::aruco::detectMarkers(currentFrame, mDict_, mMarkerCorners_, mMarkerIds_, mDetectorParams_);
-
+  cv::aruco::drawDetectedMarkers(currentFrame, mMarkerCorners_, mMarkerIds_);
+  cv::imshow("test", currentFrame);
+  cv::waitKey(10);
+  mCurrentJointPos_ = js->position[0];
   size_t index = 0;
   for (const auto& id : mMarkerIds_)
   {
+    auto tl = mMarkerCorners_[index][0];
+    /*auto tr = mMarkerCorners_[index][1];*/
+    auto br = mMarkerCorners_[index][2];
+    /*auto bl = mMarkerCorners_[index][3];*/
+    auto xCenter = (tl.x + br.x) / 2;
     auto itr = std::find_if(mDetectedIds_.begin(), mDetectedIds_.end(), [&id](auto elem) {
       if (elem.first == id)
       {
@@ -51,9 +62,13 @@ void CamMover::getCurrentFrame(const sensor_msgs::msg::Image::ConstSharedPtr& im
     });
     if (mDetectedIds_.size() < 5 && itr == mDetectedIds_.end())
     {
-      RCLCPP_INFO(this->get_logger(), "Detected new aruco with id: %d", id);
+      if (xCenter < (float)currentFrame.cols / 2 - 10 || xCenter > (float)currentFrame.cols / 2 + 10)
+        continue;
+      std::cout << "L: " << (float)currentFrame.cols / 2 - 5 << "\tC: " << xCenter
+                << "\tR: " << (float)currentFrame.cols / 2 + 5 << std::endl;
+      std::cout << "Detected new aruco with id: " << id << std::endl;
       // 0 is the index of camera_joint in the array
-      mDetectedIds_.insert({ id, js->position[0] });
+      mDetectedIds_.insert({ id, mCurrentJointPos_ });
       if (mDetectedIds_.size() == 5)
       {
         /*std::sort(mDetectedIds_.begin(), mDetectedIds_.end());*/
@@ -72,8 +87,11 @@ void CamMover::getCurrentFrame(const sensor_msgs::msg::Image::ConstSharedPtr& im
           outString += std::to_string(elem.first);
         }
         RCLCPP_INFO(this->get_logger(), "Found all markers. The order is: %s", outString.c_str());
-        /*stopRotation();*/
+        stopRotation();
+        mTarget_ = mDetectedIds_.begin()->second;
+        mTimer_ = this->create_wall_timer(25ms, std::bind(&CamMover::timerCallback, this));
       }
+      std::cout << "DIMENSION: " << mDetectedIds_.size() << std::endl;
     }
     else if (mDetectedIds_.size() == 5)
     {
@@ -84,13 +102,14 @@ void CamMover::getCurrentFrame(const sensor_msgs::msg::Image::ConstSharedPtr& im
       auto xCenter = (tl.x + br.x) / 2;
       auto yCenter = (tl.y + br.y) / 2;
       float radius = cv::norm(tl - br) / 2;
+      std::cout << "L: " << (float)currentFrame.cols / 2 - 20 << "\tC: " << xCenter
+                << "\tR: " << (float)currentFrame.cols / 2 + 20 << std::endl;
 
-      if (xCenter >= (float)currentFrame.cols / 2 - 10 && xCenter <= (float)currentFrame.cols / 2 + 10)
+      if (xCenter >= (float)currentFrame.cols / 2 - 60 && xCenter <= (float)currentFrame.cols / 2 + 60)
       {
         // TODO think of a better way
         auto iter = mDetectedIds_.begin();
-        for (size_t i = 0; i < mCurrentSearchingIndex_; iter++, i++)
-          ;
+        std::advance(iter, mCurrentSearchingIndex_);
         if (id == iter->first)
         {
           RCLCPP_INFO(this->get_logger(), "Published image of marker id: %d", id);
@@ -103,6 +122,9 @@ void CamMover::getCurrentFrame(const sensor_msgs::msg::Image::ConstSharedPtr& im
           ++mCurrentSearchingIndex_;
           if (mCurrentSearchingIndex_ == 5)
             mCurrentSearchingIndex_ = 0;
+          auto auxIter = mDetectedIds_.begin();
+          std::advance(auxIter, mCurrentSearchingIndex_);
+          mTarget_ = auxIter->second;
         }
       }
     }
@@ -128,5 +150,24 @@ void CamMover::stopRotation()
   RCLCPP_INFO(this->get_logger(), "Stopped rotation");
   std_msgs::msg::Float64MultiArray cmdVel;
   cmdVel.data.emplace_back(0);
+  mVelocityPublisher_->publish(cmdVel);
+}
+
+float CamMover::mod(float num, float base)
+{
+  /*return num - floor(num / base) * base;*/
+  return std::fmod((std::fmod(num, base) + base), base);
+}
+
+void CamMover::timerCallback()
+{
+  float diff = mTarget_ - mod(mCurrentJointPos_, 2 * M_PI);
+
+  diff = mod(diff + M_PI, 2 * M_PI) - M_PI;
+
+  diff = fmin(1, diff);
+  diff = fmax(-1, diff);
+  std_msgs::msg::Float64MultiArray cmdVel;
+  cmdVel.data.emplace_back(0.95 * diff);
   mVelocityPublisher_->publish(cmdVel);
 }

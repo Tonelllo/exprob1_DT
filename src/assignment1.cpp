@@ -19,7 +19,8 @@ int main(int argc, char** argv)
 
 
   std::cout << "STARTED" << std::endl;
-  rclcpp::spin(std::make_shared<CamMover>());
+  /*rclcpp::spin(std::make_shared<CamMover>());*/
+  rclcpp::spin(std::make_shared<RobotMover>());
 
   rclcpp::shutdown();
   return 0;

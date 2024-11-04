@@ -48,7 +48,7 @@ def generate_launch_description():
 
     run_assignment = Node(package="exprob_dt",
                           executable="assignment1",
-                          # prefix=['gdbserver localhost:3000'],
+                          prefix=['gdbserver localhost:3000'],
                           output="screen")
 
     return LaunchDescription([
@@ -58,7 +58,6 @@ def generate_launch_description():
                               description='Absolute path to robot urdf file'),
         # aruco_ros,
         robot_state_publisher_node,
-        joint_state_publisher_node,
         spawn_entity,
         camera_velocity_controller,
         broad,

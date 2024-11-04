@@ -10,7 +10,7 @@
 
 using std::placeholders::_1;
 
-RobotMover::RobotMover(std::vector<int>& detectedIds) : Node("aruco_controller"), mDetectedIds_(detectedIds)
+RobotMover::RobotMover() : Node("aruco_controller")
 {
   mCameraSubscriber_ = this->create_subscription<sensor_msgs::msg::Image>(
       "/camera/image_raw", 1, std::bind(&RobotMover::getCurrentFrame, this, _1));
@@ -18,6 +18,8 @@ RobotMover::RobotMover(std::vector<int>& detectedIds) : Node("aruco_controller")
   mDetectorParams_ = cv::aruco::DetectorParameters::create();
   mDict_ = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_ARUCO_ORIGINAL);
   mVelocityPublisher_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
+  mCurrentSearchingIndex_ = 0;
+  startRotation();
 }
 
 void RobotMover::rotatingRobot(cv::Mat& currentFrame)
