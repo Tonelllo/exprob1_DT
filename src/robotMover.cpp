@@ -13,7 +13,7 @@ using std::placeholders::_1;
 RobotMover::RobotMover() : Node("aruco_controller")
 {
   mCameraSubscriber_ = this->create_subscription<sensor_msgs::msg::Image>(
-      "/camera/image_raw", 1, std::bind(&RobotMover::getCurrentFrame, this, _1));
+      "/camera/rgb/image_raw", 1, std::bind(&RobotMover::getCurrentFrame, this, _1));
   mDetectionPublisher_ = this->create_publisher<sensor_msgs::msg::Image>("/assignment/detected_markers", 1);
   mVelocityPublisher_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
   mCurrentSearchingIndex_ = 0;
@@ -22,7 +22,9 @@ RobotMover::RobotMover() : Node("aruco_controller")
 
 void RobotMover::getCurrentFrame(const sensor_msgs::msg::Image::SharedPtr img)
 {
-    mArucoDetector_.detect(img);
+    std::cout << "frame got" << std::endl;
+  startRotation();
+  mArucoDetector_.detect(img);
 
   size_t index = 0;
   for (const auto& id : mArucoDetector_.markerIds_)
@@ -62,7 +64,8 @@ void RobotMover::getCurrentFrame(const sensor_msgs::msg::Image::SharedPtr img)
       auto yCenter = (tl.y + br.y) / 2;
       float radius = cv::norm(tl - br) / 2;
 
-      if (xCenter >= (float)mArucoDetector_.currentFrame_.cols / 2 - 10 && xCenter <= (float)mArucoDetector_.currentFrame_.cols / 2 + 10)
+      if (xCenter >= (float)mArucoDetector_.currentFrame_.cols / 2 - 10 &&
+          xCenter <= (float)mArucoDetector_.currentFrame_.cols / 2 + 10)
       {
         if (id == mDetectedIds_[mCurrentSearchingIndex_])
         {

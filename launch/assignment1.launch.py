@@ -53,19 +53,19 @@ def generate_launch_description():
                           output="screen")
 
     return LaunchDescription([
-        SetEnvironmentVariable(name="GAZEBO_MODEL_PATH",
-                               value=gazebo_model_path),
-        DeclareLaunchArgument(name='model', default_value=os.path.join(urdf_path, "robot.xacro"),
-                              description='Absolute path to robot urdf file'),
+        # SetEnvironmentVariable(name="GAZEBO_MODEL_PATH",
+        #                        value=gazebo_model_path),
+        # DeclareLaunchArgument(name='model', default_value=os.path.join(urdf_path, "robot.xacro"),
+        #                       description='Absolute path to robot urdf file'),
         # aruco_ros,
-        robot_state_publisher_node,
-        spawn_entity,
-        camera_velocity_controller,
-        broad,
+        # robot_state_publisher_node,
+        # spawn_entity,
+        # camera_velocity_controller,
+        # broad,
         run_assignment,
 
-        ExecuteProcess(
-            cmd=['gazebo', '--verbose', worlds_path+'/aruco_world.world', '-s', "libgazebo_ros_factory.so", "-s", "libgazebo_ros_init.so"], output='screen'),
+        # ExecuteProcess(
+        #     cmd=['gazebo', '--verbose', worlds_path+'/aruco_world.world', '-s', "libgazebo_ros_factory.so", "-s", "libgazebo_ros_init.so"], output='screen'),
         # ExecuteProcess(
         #     cmd=['rviz2', '-d', rviz_config_path+'/rviz.rviz'],
         #     output='screen'),
