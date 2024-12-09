@@ -6,7 +6,7 @@
 #include <rclcpp/executors.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/utilities.hpp>
-#include <thread>
+
 int main(int argc, char** argv)
 {
   using namespace std::chrono_literals;

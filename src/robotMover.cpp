@@ -10,6 +10,9 @@
 
 using std::placeholders::_1;
 
+/**
+ * @brief Constructor for the movement of the robot
+ */
 RobotMover::RobotMover() : Node("aruco_controller")
 {
   mCameraSubscriber_ = this->create_subscription<sensor_msgs::msg::Image>(
@@ -20,6 +23,11 @@ RobotMover::RobotMover() : Node("aruco_controller")
   startRotation();
 }
 
+/**
+ * @brief Gets the current image for detection of the aruco
+ *
+ * @param img Current image got by the camera
+ */
 void RobotMover::getCurrentFrame(const sensor_msgs::msg::Image::SharedPtr img)
 {
     mArucoDetector_.detect(img);
@@ -83,6 +91,11 @@ void RobotMover::getCurrentFrame(const sensor_msgs::msg::Image::SharedPtr img)
   }
 }
 
+/**
+ * @brief Starts the rotation of the robot
+ *
+ * Note that on the real robot this has to be called with a timer
+ */
 void RobotMover::startRotation()
 {
   using namespace std::chrono_literals;
@@ -92,6 +105,9 @@ void RobotMover::startRotation()
   mVelocityPublisher_->publish(cmdVel);
 }
 
+/**
+ * @brief Stops the rotation of the robot
+ */
 void RobotMover::stopRotation()
 {
   RCLCPP_INFO(this->get_logger(), "Stopped rotation");

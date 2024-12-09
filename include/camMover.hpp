@@ -30,8 +30,8 @@ class CamMover : public rclcpp::Node, public Mover
       message_filters::sync_policies::ApproximateTime<sensor_msgs::msg::Image, sensor_msgs::msg::JointState>;
   using mSync_ = message_filters::Synchronizer<mSyncPolicy_>;
   std::shared_ptr<mSync_> mSyncronizer_;
-  void timerCallback();
-  float mod(float, float);
+  void velCallback();
+  float euclMod(float, float);
   std::atomic<float> mTarget_;
   std::atomic<float> mCurrentJointPos_;
 
