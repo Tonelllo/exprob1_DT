@@ -28,6 +28,8 @@ int main(int argc, char** argv)
 
   std::cin >> c;
 
+  // This is done to stick to the requirement that we should implement the aruco seeking behaviour with two different
+  // nodes
   if (c == 'c')
   {
     rclcpp::spin(std::make_shared<CamMover>());
