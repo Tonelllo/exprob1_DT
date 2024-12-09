@@ -26,4 +26,4 @@
 + `source install/setup.bash`
 + `ros2 launch exprob_dt assignment1.launch.py`
 # Documentation
-You can find the documentation at 
+You can find the documentation at [https://tonelllo.github.io/exprob1_DT/html/](https://tonelllo.github.io/exprob1_DT/html/)
