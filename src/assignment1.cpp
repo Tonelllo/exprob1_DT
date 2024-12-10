@@ -26,6 +26,7 @@ int main(int argc, char** argv)
                "+------------------------------------------------------------+\n"
             << std::endl;
 
+  std::cout << "Selection :";
   std::cin >> c;
 
   // This is done to stick to the requirement that we should implement the aruco seeking behaviour with two different

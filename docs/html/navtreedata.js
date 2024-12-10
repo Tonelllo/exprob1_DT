@@ -23,6 +23,14 @@ for the JavaScript code in this file
 var NAVTREE =
 [
   [ "Exprob assignment1", "index.html", [
+    [ "README", "md__r_e_a_d_m_e.html", [
+      [ "Assumptions", "md__r_e_a_d_m_e.html#autotoc_md0", null ],
+      [ "Installation", "md__r_e_a_d_m_e.html#autotoc_md1", [
+        [ "In an already present workspace", "md__r_e_a_d_m_e.html#autotoc_md2", null ],
+        [ "In a new workspace", "md__r_e_a_d_m_e.html#autotoc_md3", null ]
+      ] ],
+      [ "Documentation", "md__r_e_a_d_m_e.html#autotoc_md4", null ]
+    ] ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],

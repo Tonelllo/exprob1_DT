@@ -80,6 +80,12 @@ void RobotMover::getCurrentFrame(const sensor_msgs::msg::Image::SharedPtr img)
           cv::putText(mArucoDetector_.currentFrame_, displayString, cv::Point(xCenter + radius, yCenter - radius),
                       cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar(255, 0, 0), 3);
 
+          // ### Uncomment this section to have directly the visualizations of the detection
+          // cv_bridge::CvImagePtr p = cv_bridge::toCvCopy(*mArucoDetector_.getFrameAsImgMsg(), sensor_msgs::image_encodings::BGR8);
+          // cv::Mat m = p->image;
+          // cv::imshow("MsgPreview", m);
+          // cv::waitKey(10);
+
           mDetectionPublisher_->publish(*mArucoDetector_.getFrameAsImgMsg());
           ++mCurrentSearchingIndex_;
           if (mCurrentSearchingIndex_ == 5)

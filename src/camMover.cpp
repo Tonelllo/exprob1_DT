@@ -1,5 +1,6 @@
 #include "camMover.hpp"
 #include <cstddef>
+#include <cv_bridge/cv_bridge.h>
 #include <memory>
 #include <opencv2/aruco.hpp>
 #include <opencv2/highgui.hpp>
@@ -41,9 +42,15 @@ void CamMover::getCurrentFrame(const sensor_msgs::msg::Image::ConstSharedPtr& im
 {
   mArucoDetector_.detect(img);
   cv::Mat& cf = mArucoDetector_.currentFrame_;
-  /*cv::aruco::drawDetectedMarkers(cf, mArucoDetector_.markerCorners_, mArucoDetector_.markerIds_);*/
-  /*cv::imshow("test", cf);*/
-  /*cv::waitKey(10);*/
+
+  // vvv COMMENT THIS SECTION TO NOT HAVE THE VISUALIZATION
+  cv::Mat cf_copy;
+  cf.copyTo(cf_copy);
+  cv::aruco::drawDetectedMarkers(cf_copy, mArucoDetector_.markerCorners_, mArucoDetector_.markerIds_);
+  cv::imshow("Detection Visualization", cf_copy);
+  cv::waitKey(10);
+  // ^^^ COMMENT THIS SECTION TO NOT HAVE THE VISUALIZATION
+
   mCurrentJointPos_ = js->position[0];
   size_t index = 0;
   for (const auto& id : mArucoDetector_.markerIds_)
@@ -67,7 +74,6 @@ void CamMover::getCurrentFrame(const sensor_msgs::msg::Image::ConstSharedPtr& im
       mDetectedIds_.insert({ id, mCurrentJointPos_ });
       if (mDetectedIds_.size() == 5)
       {
-        /*std::sort(mDetectedIds_.begin(), mDetectedIds_.end());*/
         std::string outString;
         bool first = true;
         for (const auto& elem : mDetectedIds_)
@@ -110,6 +116,13 @@ void CamMover::getCurrentFrame(const sensor_msgs::msg::Image::ConstSharedPtr& im
           cv::circle(cf, cv::Point(xCenter, yCenter), radius, cv::Scalar(0, 255, 0), 3);
           cv::putText(cf, displayString, cv::Point(xCenter + radius, yCenter - radius), cv::FONT_HERSHEY_COMPLEX, 1,
                       cv::Scalar(255, 0, 0), 3);
+
+          
+          // ### Uncomment this section to have directly the visualizations of the detection
+          // cv_bridge::CvImagePtr p = cv_bridge::toCvCopy(*mArucoDetector_.getFrameAsImgMsg(), sensor_msgs::image_encodings::BGR8);
+          // cv::Mat m = p->image;
+          // cv::imshow("MsgPreview", m);
+          // cv::waitKey(10);
 
           mDetectionPublisher_->publish(*mArucoDetector_.getFrameAsImgMsg());
           ++mCurrentSearchingIndex_;
