@@ -22,7 +22,7 @@
 + `git clone https://github.com/Tonelllo/exprob1_DT.git`
 + `cd ..`
 + `source /opt/ros/foxy/setup.bash`
-+ `colcon build`
++ `colcon build --packages-select exprob_dt`
 + `source install/setup.bash`
 + `ros2 launch exprob_dt assignment1.launch.py`
 # Documentation
