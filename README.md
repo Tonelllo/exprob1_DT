@@ -22,7 +22,6 @@ There were some problems with the visualization of images in particular with ima
 + Clone this repo inside the src folder of a ros2 foxy workspace
 + build the workspace
 + source the project
-+ `ros2 launch exprob_dt assignment1.launch.py`
 ## In a new workspace
 + `mkdir -p MyWorkspace/src`
 + `cd MyWorkspace/src`
@@ -31,6 +30,10 @@ There were some problems with the visualization of images in particular with ima
 + `source /opt/ros/foxy/setup.bash`
 + `colcon build --packages-select exprob_dt`
 + `source install/setup.bash`
-+ `ros2 launch exprob_dt assignment1.launch.py`
+# Execution
+```bash
+ros2 launch exprob_dt assignment1.launch.py
+```
+Note that a lxterminal window will be opened where you can select either robot or camera to be moved in order to detect the markers.
 # Documentation
 You can find the documentation at [https://tonelllo.github.io/exprob1_DT/html/](https://tonelllo.github.io/exprob1_DT/html/)
