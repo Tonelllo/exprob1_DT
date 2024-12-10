@@ -15,7 +15,7 @@
 If using this code inside of https://hub.docker.com/r/carms84/noetic_ros2 install these two packages: </br>
 + `sudo apt install ros-foxy-ros2-control`
 + `sudo apt install ros-foxy-ros2-controllers`
-There were some problems with the visualization of images in particular with image_tools. This seems to partially solve them:
+</br>There were some problems with the visualization of images in particular with image_tools. This seems to partially solve them:
 + `sudo apt-get install at-spi2-core`
 ## In an already present workspace
 + Clone this repo inside the src folder of a ros2 foxy workspace
