@@ -36,9 +36,10 @@ There were some problems with the visualization of images in particular with ima
 ```bash
 ros2 launch exprob_dt assignment1.launch.py
 ```
-Note that a lxterminal window will be opened where you can select either robot or camera to be moved in order to detect the markers.</br>
-The images are published on the topic `/assignment/detected_markers`. </br>
-**NOTE** that the first images if visualized with image_tools are lost, at least in my machine on the docker container.</br>
-**NOTE** that for the movement of the camera I left the visualization of the detection to show the behaviour of the camera. If it's unwanted remove by commenting lines 47-51 in [src/camMover.cpp](src/camMover.cpp)
++ Note that a lxterminal window will be opened once launched where you can select either robot or camera to be moved in order to detect the markers.
++ The images are published on the topic `/assignment/detected_markers`.
++ **NOTE** that the first images if visualized with image_tools are lost, at least in my machine on the docker container.
++ **NOTE** that for the movement of the camera I left the visualization of the detection to show the behaviour of the camera. If it's unwanted remove by commenting lines 47-51 in [src/camMover.cpp](src/camMover.cpp).
++ Both in [src/camMover.cpp](src/camMover.cpp) and in [src/robotMover.cpp](src/robotMover.cpp) there are snippets of code commented that allow the direct visualization of the detections with openCV.
 # Documentation
 You can find the documentation at [https://tonelllo.github.io/exprob1_DT/html/](https://tonelllo.github.io/exprob1_DT/html/)
