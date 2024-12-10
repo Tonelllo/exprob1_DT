@@ -70,7 +70,7 @@ void RobotMover::getCurrentFrame(const sensor_msgs::msg::Image::SharedPtr img)
       auto yCenter = (tl.y + br.y) / 2;
       float radius = cv::norm(tl - br) / 2;
 
-      if (xCenter >= (float)mArucoDetector_.currentFrame_.cols / 2 - 10 && xCenter <= (float)mArucoDetector_.currentFrame_.cols / 2 + 10)
+      if (xCenter >= (float)mArucoDetector_.currentFrame_.cols / 2 - 20 && xCenter <= (float)mArucoDetector_.currentFrame_.cols / 2 + 20)
       {
         if (id == mDetectedIds_[mCurrentSearchingIndex_])
         {
@@ -102,6 +102,11 @@ void RobotMover::startRotation()
   RCLCPP_INFO(this->get_logger(), "Started rotation");
   geometry_msgs::msg::Twist cmdVel;
   cmdVel.angular.z = 1;
+  while (!mVelocityPublisher_->get_subscription_count())
+  {
+    RCLCPP_WARN(this->get_logger(), "Waiting for robot to come up");
+    rclcpp::sleep_for(1s);
+  }
   mVelocityPublisher_->publish(cmdVel);
 }
 

@@ -49,7 +49,7 @@ def generate_launch_description():
     run_assignment = Node(package="exprob_dt",
                           executable="assignment1",
                           # prefix=['gdbserver localhost:3000'],
-                          prefix = ["konsole -e"],
+                          prefix = ["lxterminal -e"],
                           output="screen")
 
     return LaunchDescription([
