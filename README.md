@@ -11,6 +11,10 @@
 + [Ros2 foxy](https://docs.ros.org/en/foxy/index.html) should be installed in the system
 + Using [ubuntu 20](https://releases.ubuntu.com/focal/)
 # Installation
+# Docker container requirements
+If using this code inside of https://hub.docker.com/r/carms84/noetic_ros2 install these two packages: </br>
++ `sudo apt install ros-foxy-ros2-control`
++ `sudo apt install ros-foxy-ros2-controllers`
 ## In an already present workspace
 + Clone this repo inside the src folder of a ros2 foxy workspace
 + build the workspace
